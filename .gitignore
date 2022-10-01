@@ -3,6 +3,13 @@ __pycache__
 venv
 package-lock.json
 
+# Virtual environment generated in backend
+backend/Include
+backend/Lib
+backend/Scripts
+backend/pyvenv.cfg
+
+
 # OS generated files #
 ######################
 .DS_Store
