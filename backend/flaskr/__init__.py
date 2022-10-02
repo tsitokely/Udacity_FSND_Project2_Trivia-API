@@ -51,12 +51,8 @@ def create_app(test_config=None):
     # CATEGORIES 
     @app.route('/categories', methods=["GET"])
     def retrieve_categories():
-        test_type = request.args.get("test_type")
-        if test_type == "200":
-            categories = Category.query.order_by(Category.id).all()
-        elif test_type == "400":
-            categories = []
-
+        categories = Category.query.order_by(Category.id).all()
+        
         if len(categories) == 0:
             abort(404)
 
@@ -80,6 +76,7 @@ def create_app(test_config=None):
     ten questions per page and pagination at the bottom of the screen for three pages.
     Clicking on the page numbers should update the questions.
     """
+    # QUESTIONS 
 
     """
     @TODO:
