@@ -145,7 +145,6 @@ COPY public.questions (id, question, answer, difficulty, category) FROM stdin;
 23	Which dung beetle was worshipped by the ancient Egyptians?	Scarab	4	4
 \.
 
-
 --
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: student
 --
@@ -174,7 +173,6 @@ ALTER TABLE ONLY public.categories
 
 ALTER TABLE ONLY public.questions
     ADD CONSTRAINT questions_pkey PRIMARY KEY (id);
-
 
 --
 -- Name: questions category; Type: FK CONSTRAINT; Schema: public; Owner: student
