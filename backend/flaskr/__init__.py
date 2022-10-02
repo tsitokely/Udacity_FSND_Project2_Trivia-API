@@ -52,7 +52,6 @@ def create_app(test_config=None):
     @app.route('/categories', methods=["GET"])
     def retrieve_categories():
         categories = Category.query.order_by(Category.id).all()
-        print(categories)
         if len(categories) == 0:
             abort(404)
 
@@ -60,6 +59,7 @@ def create_app(test_config=None):
             {
                 "success": True,
                 "categories":[categorie.format() for categorie in categories],
+                "total_categories":len(categories)
             }
         )
 
