@@ -197,6 +197,7 @@ def create_app(test_config=None):
     @app.route("/categories/<int:categorie_id>/questions")
     def retrieve_questions_per_category(categorie_id):
         selection = Question.query.filter_by(category = categorie_id).all()
+        category = Category.query.filter_by(id = categorie_id).one_or_none()
         if selection is None:
             abort(404)
         current_questions= paginate_questions(request, selection)
@@ -210,7 +211,7 @@ def create_app(test_config=None):
             }
         )
     """
-    @TODO:
+    @OK:
     Create a POST endpoint to get questions to play the quiz.
     This endpoint should take category and previous question parameters
     and return a random questions within the given category,
@@ -220,7 +221,28 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
+    @app.route("/quizzes", methods=['POST'])
+    def display_quizzes():
+        body = request.get_json()
+        previous_questions = body.get("previous_questions", None)
+        current_category = body.get("quiz_category", None)
+        if previous_questions is None or current_category is None:
+            abort(400)
+        #category
+        current_category_info = Category.query.filter_by(type=current_category).one()
+        print(current_category_info.id)
+        
+        #questions
+        filtered_quizz = Question.query.filter(Question.category==current_category_info.id,Question.id.notin_(previous_questions)).all()
+        questions_id = [question.id for question in filtered_quizz]
 
+        new_quizz = Question.query.filter_by(id = random.choice(questions_id)).one()
+
+        return jsonify(
+            {
+                "question": new_quizz.format()
+            }
+        )
     """
     @OK:
     Create error handlers for all expected errors
