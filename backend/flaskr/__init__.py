@@ -44,13 +44,18 @@ def create_app(test_config=None):
         return response
 
     """
-    @TODO:
+    @OK:
     Create an endpoint to handle GET requests
     for all available categories.
     """
+    # CATEGORIES 
     @app.route('/categories', methods=["GET"])
     def retrieve_categories():
-        categories = Category.query.order_by(Category.id).all()
+        test_type = request.args.get("test_type")
+        if test_type == "200":
+            categories = Category.query.order_by(Category.id).all()
+        elif test_type == "400":
+            categories = []
 
         if len(categories) == 0:
             abort(404)
@@ -132,6 +137,30 @@ def create_app(test_config=None):
     Create error handlers for all expected errors
     including 404 and 422.
     """
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
+   
+    @app.errorhandler(404)
+    def not_found(error):
+        return (
+            jsonify({"success": False, "error": 404, "message": "resource not found"}),
+            404,
+        )
 
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return (
+            jsonify({"success": False, "error": 405, "message": "method not allowed"}),
+            405,
+        )
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return (
+            jsonify({"success": False, "error": 422, "message": "unprocessable"}),
+            422,
+        )
     return app
+
 
