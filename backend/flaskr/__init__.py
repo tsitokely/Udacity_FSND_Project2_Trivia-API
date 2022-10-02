@@ -79,21 +79,17 @@ def create_app(test_config=None):
     # QUESTIONS 
     @app.route("/questions")
     def retrieve_questions():
-        search_term = request.args.get("search_term")
-        if search_term is None:
-            selection = Question.query.order_by(Question.id).all()
-            current_questions= paginate_questions(request, selection)
-            if len(current_questions) == 0:
-                abort(404)
-            return jsonify(
-                {
-                    "success": True,
-                    "questions": current_questions,
-                    "total_questions": len(Question.query.all()),
-                }
-            )
-        else:
-            print('1')
+        selection = Question.query.order_by(Question.id).all()
+        current_questions= paginate_questions(request, selection)
+        if len(current_questions) == 0:
+            abort(404)
+        return jsonify(
+            {
+                "success": True,
+                "questions": current_questions,
+                "total_questions": len(Question.query.all()),
+            }
+        )
     """
     @OK:
     Create an endpoint to DELETE question using a question ID.
@@ -135,33 +131,6 @@ def create_app(test_config=None):
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.
     """
-    @app.route("/questions", methods=["POST"])
-    def create_question():
-        body = request.get_json()
-
-        new_answer = body.get("answer", None)
-        new_category = body.get("category", None)
-        new_difficulty = body.get("difficulty", None)
-        new_question = body.get("question", None)
-
-        try:
-            question = Question(answer=new_answer, category=new_category, difficulty=new_difficulty, question=new_question)
-            question.insert()
-
-            selection = Question.query.order_by(Question.id).all()
-            current_questions = paginate_questions(request, selection)
-
-            return jsonify(
-                {
-                    "success": True,
-                    "created": question.id,
-                    "questions": current_questions,
-                    "questions": len(Question.query.all()),
-                }
-            )
-
-        except:
-            abort(422)
     """
     @TODO:
     Create a POST endpoint to get questions based on a search term.
@@ -172,7 +141,49 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
+    @app.route("/questions", methods=["POST"])
+    def create_question():
+        body = request.get_json()
 
+        new_answer = body.get("answer", None)
+        new_category = body.get("category", None)
+        new_difficulty = body.get("difficulty", None)
+        new_question = body.get("question", None)
+        
+        search_term = body.get("search_term", None)
+
+        try:
+            if search_term:
+                selection = Question.query.order_by(Question.id).filter(
+                    Question.question.ilike("%{}%".format(search_term))
+                )
+                print(search_term)
+                current_questions = paginate_questions(request, selection)
+                return jsonify(
+                    {
+                        "success": True,
+                        "questions": current_questions,
+                        "total_questions": len(selection.all()),
+                    }
+                )
+            else:
+                question = Question(answer=new_answer, category=new_category, difficulty=new_difficulty, question=new_question)
+                question.insert()
+
+                selection = Question.query.order_by(Question.id).all()
+                current_questions = paginate_questions(request, selection)
+
+                return jsonify(
+                    {
+                        "success": True,
+                        "created": question.id,
+                        "questions": current_questions,
+                        "total_questions": len(Question.query.all()),
+                    }
+                )
+
+        except:
+            abort(422)
     """
     @TODO:
     Create a GET endpoint to get questions based on category.
