@@ -122,7 +122,7 @@ def create_app(test_config=None):
             abort(422)
 
     """
-    @TODO:
+    @OK:
     Create an endpoint to POST a new question,
     which will require the question and answer text,
     category, and difficulty score.
@@ -132,7 +132,7 @@ def create_app(test_config=None):
     of the questions list in the "List" tab.
     """
     """
-    @TODO:
+    @OK:
     Create a POST endpoint to get questions based on a search term.
     It should return any questions for whom the search term
     is a substring of the question.
@@ -185,14 +185,28 @@ def create_app(test_config=None):
         except:
             abort(422)
     """
-    @TODO:
+    @OK:
     Create a GET endpoint to get questions based on category.
 
     TEST: In the "List" tab / main screen, clicking on one of the
     categories in the left column will cause only questions of that
     category to be shown.
     """
-
+    @app.route("/categories/<int:categorie_id>/questions")
+    def retrieve_questions_per_category(categorie_id):
+        selection = Question.query.filter_by(category = categorie_id).all()
+        if selection is None:
+            abort(404)
+        current_questions= paginate_questions(request, selection)
+        if len(current_questions) == 0:
+            abort(404)
+        return jsonify(
+            {
+                "success": True,
+                "questions": current_questions,
+                "total_questions_per_category": len(selection),
+            }
+        )
     """
     @TODO:
     Create a POST endpoint to get questions to play the quiz.
@@ -206,7 +220,7 @@ def create_app(test_config=None):
     """
 
     """
-    @TODO:
+    @OK:
     Create error handlers for all expected errors
     including 404 and 422.
     """
