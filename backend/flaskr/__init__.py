@@ -59,15 +59,13 @@ def create_app(test_config=None):
             data[cat.id] = cat.type
         return jsonify(
             {
-                "success": True,
-                "categories": data,
-                "total_categories":len(categories)
+                "categories": data
             }
         )
 
 
     """
-    @TODO:
+    @OK:
     Create an endpoint to handle GET requests for questions,
     including pagination (every 10 questions).
     This endpoint should return a list of questions,
@@ -95,7 +93,7 @@ def create_app(test_config=None):
                 "questions": current_questions,
                 "totalQuestions": len(Question.query.all()),
                 "categories": categories_data,
-                "currentCategory": ""
+                "currentCategory": "History"
             }
         )
     """
@@ -106,7 +104,7 @@ def create_app(test_config=None):
     This removal will persist in the database and when you refresh the page.
     """
     @app.route("/questions/<int:question_id>", methods=["DELETE"])
-    def delete_book(question_id):
+    def delete_question(question_id):
         try:
             question = Question.query.filter(Question.id == question_id).one_or_none()
 
@@ -171,7 +169,7 @@ def create_app(test_config=None):
                         "success": True,
                         "questions": current_questions,
                         "total_questions": len(selection.all()),
-                        "currentCategory": ""
+                        "currentCategory": "History"
                     }
                 )
             else:
@@ -194,10 +192,10 @@ def create_app(test_config=None):
     categories in the left column will cause only questions of that
     category to be shown.
     """
-    @app.route("/categories/<int:categorie_id>/questions")
-    def retrieve_questions_per_category(categorie_id):
-        selection = Question.query.filter_by(category = categorie_id).all()
-        category = Category.query.filter_by(id = categorie_id).one_or_none()
+    @app.route("/categories/<int:cat_id>/questions")
+    def retrieve_questions_per_category(cat_id):
+        selection = Question.query.filter_by(category = cat_id).all()
+        category = Category.query.filter_by(id = cat_id).one()
         if selection is None:
             abort(404)
         current_questions= paginate_questions(request, selection)
@@ -225,13 +223,13 @@ def create_app(test_config=None):
     def display_quizzes():
         body = request.get_json()
         previous_questions = body.get("previous_questions", None)
-        current_category = body.get("quiz_category", None)
+        current_category_json = body.get("quiz_category", None)
+        current_category = current_category_json.get("type", None)
         if previous_questions is None or current_category is None:
             abort(400)
         #category
         current_category_info = Category.query.filter_by(type=current_category).one()
-        print(current_category_info.id)
-        
+
         #questions
         filtered_quizz = Question.query.filter(Question.category==current_category_info.id,Question.id.notin_(previous_questions)).all()
         questions_id = [question.id for question in filtered_quizz]

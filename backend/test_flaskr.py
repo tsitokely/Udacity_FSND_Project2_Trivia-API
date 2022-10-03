@@ -32,7 +32,7 @@ class TriviaTestCase(unittest.TestCase):
         pass
 
     """
-    TODO
+    OK
     Write at least one test for each test for successful operation and for expected errors.
     """
     # TEST - CATEGORIES 
@@ -44,12 +44,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["message"], "resource not found")
 
     def test_get_categories(self):
-        res = self.client().get("/categories?test_type=200")
+        res = self.client().get("/categories")
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data["success"], True)
         self.assertTrue(data["categories"])
-        self.assertTrue(data["total_categories"])
 
     # TEST - QUESTIONS 
     ## TEST - QUESTIONS PAGINATED 
@@ -57,7 +55,6 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get("/questions")
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data["success"], True)
         self.assertTrue(data["totalQuestions"])
         self.assertTrue(len(data["questions"]))
     
