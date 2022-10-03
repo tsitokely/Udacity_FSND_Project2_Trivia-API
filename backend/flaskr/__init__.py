@@ -9,13 +9,14 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
 def paginate_questions(request, selection):
     page = request.args.get("page", 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
 
     questions = [question.format() for question in selection]
-    current_questions= questions[start:end]
+    current_questions = questions[start:end]
 
     return current_questions
 
@@ -26,7 +27,7 @@ def create_app(test_config=None):
     setup_db(app)
 
     """
-    @OK: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+    @OK: Set up CORS. Allow '*' for origins.
     """
     CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -63,24 +64,18 @@ def create_app(test_config=None):
             }
         )
 
-
     """
     @OK:
     Create an endpoint to handle GET requests for questions,
     including pagination (every 10 questions).
     This endpoint should return a list of questions,
     number of total questions, current category, categories.
-
-    TEST: At this point, when you start the application
-    you should see questions and categories generated,
-    ten questions per page and pagination at the bottom of the screen for three pages.
-    Clicking on the page numbers should update the questions.
     """
     # QUESTIONS 
     @app.route("/questions")
     def retrieve_questions():
         selection = Question.query.order_by(Question.id).all()
-        current_questions= paginate_questions(request, selection)
+        current_questions = paginate_questions(request, selection)
         if len(current_questions) == 0:
             abort(404)
         categories = Category.query.order_by(Category.id).all()
@@ -183,7 +178,8 @@ def create_app(test_config=None):
                     }
                 )
 
-        except:
+        except Exception as e:
+            print(e)
             abort(422)
     """
     @OK:
@@ -195,11 +191,11 @@ def create_app(test_config=None):
     """
     @app.route("/categories/<int:cat_id>/questions")
     def retrieve_questions_per_category(cat_id):
-        selection = Question.query.filter_by(category = cat_id).all()
-        category = Category.query.filter_by(id = cat_id).one_or_none()
+        selection = Question.query.filter_by(category=cat_id).all()
+        category = Category.query.filter_by(id=cat_id).one_or_none()
         if selection is None:
             abort(404)
-        current_questions= paginate_questions(request, selection)
+        current_questions = paginate_questions(request, selection)
         if len(current_questions) == 0:
             abort(404)
         return jsonify(
@@ -230,14 +226,14 @@ def create_app(test_config=None):
         else:
             current_category = current_category_json.get("type", None)
         num_question_per_cat = 0
-        if current_category =='click':
+        if current_category == 'click':
             filtered_quizz = Question.query.filter(Question.id.notin_(previous_questions)).all()
             questions_id = [question.id for question in filtered_quizz]
             if questions_id == []:
                 quizzid = 0
             else:
                 quizzid = random.choice(questions_id)
-            new_quizz = Question.query.filter_by(id = quizzid).one_or_none()
+            new_quizz = Question.query.filter_by(id=quizzid).one_or_none()
             num_question_per_cat = Question.query.count()
         else:
             current_category_info = Category.query.filter_by(type=current_category).one()
@@ -247,8 +243,8 @@ def create_app(test_config=None):
                 quizzid = 0
             else:
                 quizzid = random.choice(questions_id)
-            new_quizz = Question.query.filter_by(id = quizzid).one_or_none()
-            num_question_per_cat =  Question.query.filter(Question.category==current_category_info.id).count()
+            new_quizz = Question.query.filter_by(id=quizzid).one_or_none()
+            num_question_per_cat = Question.query.filter(Question.category == current_category_info.id).count()
             
         if new_quizz is None:
             return jsonify(
@@ -260,7 +256,7 @@ def create_app(test_config=None):
             return jsonify(
                 {
                     "question": new_quizz.format(),
-                    "num_question_per_cat" : num_question_per_cat
+                    "num_question_per_cat": num_question_per_cat
                 }
             )
     """

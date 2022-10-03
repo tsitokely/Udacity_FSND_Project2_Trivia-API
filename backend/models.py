@@ -10,7 +10,7 @@ database_name = os.environ.get("TRIVIA_DB")
 database_user = os.environ.get("TRIVIA_DB_USR")
 database_password = os.environ.get("TRIVIA_DB_USR_PWD")
 database_host_port = os.environ.get("TRIVIA_DB_HOST_PORT")
-database_path = 'postgresql://{}:{}@{}/{}'.format(database_user,database_password,database_host_port, database_name)
+database_path = 'postgresql://{}:{}@{}/{}'.format(database_user, database_password, database_host_port, database_name)
 
 db = SQLAlchemy()
 
@@ -18,6 +18,8 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 """
+
+
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -25,10 +27,13 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
 
+
 """
 Question
 
 """
+
+
 class Question(db.Model):
     __tablename__ = 'questions'
 
@@ -64,10 +69,13 @@ class Question(db.Model):
             'difficulty': self.difficulty
             }
 
+
 """
 Category
 
 """
+
+
 class Category(db.Model):
     __tablename__ = 'categories'
 
