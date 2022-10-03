@@ -5,6 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
 from models import setup_db, Question, Category
+from dotenv import load_dotenv
+
+load_dotenv()
+
+database_name = os.environ.get("TRIVIA_TEST_DB")
+database_user = os.environ.get("TRIVIA_DB_TEST_USR")
+database_password = os.environ.get("TRIVIA_DB_TEST_USR_PWD")
+database_host_port = os.environ.get("TRIVIA_DB_TEST_HOST_PORT")
+database_path = 'postgresql://{}:{}@{}/{}'.format(database_user, database_password, database_host_port, database_name)
 
 
 class TriviaTestCase(unittest.TestCase):
