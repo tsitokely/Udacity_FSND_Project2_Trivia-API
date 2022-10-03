@@ -10,7 +10,9 @@ database_name = os.environ.get("TRIVIA_DB")
 database_user = os.environ.get("TRIVIA_DB_USR")
 database_password = os.environ.get("TRIVIA_DB_USR_PWD")
 database_host_port = os.environ.get("TRIVIA_DB_HOST_PORT")
-database_path = 'postgresql://{}:{}@{}/{}'.format(database_user, database_password, database_host_port, database_name)
+database_path = 'postgresql://{}:{}@{}/{}'.format(
+                database_user, database_password,
+                database_host_port, database_name)
 
 db = SQLAlchemy()
 

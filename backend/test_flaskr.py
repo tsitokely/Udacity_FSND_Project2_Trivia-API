@@ -13,7 +13,9 @@ database_name = os.environ.get("TRIVIA_TEST_DB")
 database_user = os.environ.get("TRIVIA_DB_TEST_USR")
 database_password = os.environ.get("TRIVIA_DB_TEST_USR_PWD")
 database_host_port = os.environ.get("TRIVIA_DB_TEST_HOST_PORT")
-database_path = 'postgresql://{}:{}@{}/{}'.format(database_user, database_password, database_host_port, database_name)
+database_path = 'postgresql://{}:{}@{}/{}'.format(
+                database_user, database_password,
+                database_host_port, database_name)
 
 
 class TriviaTestCase(unittest.TestCase):
@@ -24,10 +26,13 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = 'postgresql://{}@{}:{}/{}'.format('student_t:student','localhost','5432', self.database_name)
+        self.database_path = database_path
         setup_db(self.app, self.database_path)
 
-        self.new_question = {"answer": "Ottawa", "category": 3, "difficulty": 1,"question": "What is the capital of Canada?"}
+        self.new_question = {"answer": "Ottawa",
+                             "category": 3,
+                             "difficulty": 1,
+                             "question": "What is the capital of Canada?"}
 
         # binds the app to the current context
         with self.app.app_context():
@@ -35,16 +40,12 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
 
-    """
-    OK
-    Write at least one test for each test for successful operation and for expected errors.
-    """
-    # TEST - CATEGORIES 
+    # TEST - CATEGORIES
     def test_get_nothing(self):
         res = self.client().get("/")
         data = json.loads(res.data)
@@ -58,15 +59,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data["categories"])
 
-    # TEST - QUESTIONS 
-    ## TEST - QUESTIONS PAGINATED 
+    # TEST - QUESTIONS
+
+    # TEST - QUESTIONS PAGINATED
     def test_get_paginated_questions(self):
         res = self.client().get("/questions")
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data["totalQuestions"])
         self.assertTrue(len(data["questions"]))
-    
+
     def test_404_sent_requesting_beyond_valid_page(self):
         res = self.client().get("/questions?page=1000")
         data = json.loads(res.data)
@@ -137,11 +139,17 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
-        self.assertEqual(data["message"],"resource not found")
+        self.assertEqual(data["message"], "resource not found")
 
     def test_generate_quizz(self):
-        res = self.client().post("/quizzes", json={"previous_questions": [9,12], "quiz_category": "History"})
+        res = self.client().post(
+            "/quizzes",
+            json={"previous_questions": [9, 12],
+                  "quiz_category": "History"}
+                  )
         self.assertEqual(res.status_code, 200)
 # Make the tests conveniently executable
+
+
 if __name__ == "__main__":
     unittest.main()

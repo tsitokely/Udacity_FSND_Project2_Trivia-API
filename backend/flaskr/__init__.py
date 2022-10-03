@@ -95,13 +95,16 @@ def create_app(test_config=None):
     @OK:
     Create an endpoint to DELETE question using a question ID.
 
-    TEST: When you click the trash icon next to a question, the question will be removed.
+    TEST: When you click the trash icon next to a question,
+    the question will be removed.
     This removal will persist in the database and when you refresh the page.
     """
     @app.route("/questions/<int:question_id>", methods=["DELETE"])
     def delete_question(question_id):
         try:
-            question = Question.query.filter(Question.id == question_id).one_or_none()
+            question = Question.query.filter(
+                                            Question.id == question_id
+                                            ).one_or_none()
 
             if question is None:
                 abort(404)
@@ -130,7 +133,8 @@ def create_app(test_config=None):
     category, and difficulty score.
 
     TEST: When you submit a question on the "Add" tab,
-    the form will clear and the question will appear at the end of the last page
+    the form will clear and the question
+    will appear at the end of the last page
     of the questions list in the "List" tab.
     """
     """
@@ -169,7 +173,12 @@ def create_app(test_config=None):
                     }
                 )
             else:
-                question = Question(answer=new_answer, category=new_category, difficulty=new_difficulty, question=new_question)
+                question = Question(
+                    answer=new_answer,
+                    category=new_category,
+                    difficulty=new_difficulty,
+                    question=new_question
+                    )
                 question.insert()
 
                 return jsonify(
@@ -227,7 +236,9 @@ def create_app(test_config=None):
             current_category = current_category_json.get("type", None)
         num_question_per_cat = 0
         if current_category == 'click':
-            filtered_quizz = Question.query.filter(Question.id.notin_(previous_questions)).all()
+            filtered_quizz = Question.query.filter(
+                                    Question.id.notin_(previous_questions)
+                                                    ).all()
             questions_id = [question.id for question in filtered_quizz]
             if questions_id == []:
                 quizzid = 0
@@ -236,20 +247,30 @@ def create_app(test_config=None):
             new_quizz = Question.query.filter_by(id=quizzid).one_or_none()
             num_question_per_cat = Question.query.count()
         else:
-            current_category_info = Category.query.filter_by(type=current_category).one()
-            filtered_quizz = Question.query.filter(Question.category==current_category_info.id,Question.id.notin_(previous_questions)).all()
+            current_category_info = Category.query.filter_by(
+                                        type=current_category
+                                                            ).one()
+            filtered_quizz = Question.query.filter(
+                                Question.category == current_category_info.id,
+                                Question.id.notin_(
+                                            previous_questions
+                                            )
+                                            ).all()
             questions_id = [question.id for question in filtered_quizz]
             if questions_id == []:
                 quizzid = 0
             else:
                 quizzid = random.choice(questions_id)
             new_quizz = Question.query.filter_by(id=quizzid).one_or_none()
-            num_question_per_cat = Question.query.filter(Question.category == current_category_info.id).count()
-            
+            num_question_per_cat = Question.query.filter(
+                                    Question.category ==
+                                    current_category_info.id
+                                    ).count()
+
         if new_quizz is None:
             return jsonify(
                 {
-                "question": "end"
+                    "question": "end"
                 }
             )
         else:
@@ -266,28 +287,42 @@ def create_app(test_config=None):
     """
     @app.errorhandler(400)
     def bad_request(error):
-        return jsonify({"success": False, "error": 400, "message": "bad request"}), 400
-   
+        return jsonify(
+            {
+                "success": False,
+                "error": 400,
+                "message": "bad request"
+            }
+            ), 400
+
     @app.errorhandler(404)
     def not_found(error):
-        return (
-            jsonify({"success": False, "error": 404, "message": "resource not found"}),
-            404,
-        )
+        return jsonify(
+            {
+                "success": False,
+                "error": 404,
+                "message": "resource not found"
+            }
+            ), 404
 
     @app.errorhandler(405)
     def method_not_allowed(error):
-        return (
-            jsonify({"success": False, "error": 405, "message": "method not allowed"}),
-            405,
-        )
+        return jsonify(
+            {
+                "success": False,
+                "error": 405,
+                "message": "method not allowed"
+            }
+            ), 405
 
     @app.errorhandler(422)
     def unprocessable(error):
-        return (
-            jsonify({"success": False, "error": 422, "message": "unprocessable"}),
-            422,
-        )
+        return jsonify(
+            {
+                "success": False,
+                "error": 422,
+                "message": "unprocessable"
+            }
+            ), 422
+
     return app
-
-
