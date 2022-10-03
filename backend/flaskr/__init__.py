@@ -234,13 +234,20 @@ def create_app(test_config=None):
         filtered_quizz = Question.query.filter(Question.category==current_category_info.id,Question.id.notin_(previous_questions)).all()
         questions_id = [question.id for question in filtered_quizz]
 
-        new_quizz = Question.query.filter_by(id = random.choice(questions_id)).one()
+        new_quizz = Question.query.filter_by(id = random.choice(questions_id)).one_or_none()
 
-        return jsonify(
-            {
-                "question": new_quizz.format()
-            }
-        )
+        if new_quizz is None:
+            return jsonify(
+                {
+                "question": "end"
+                }
+            )
+        else:
+            return jsonify(
+                {
+                    "question": new_quizz.format()
+                }
+            )
     """
     @OK:
     Create error handlers for all expected errors

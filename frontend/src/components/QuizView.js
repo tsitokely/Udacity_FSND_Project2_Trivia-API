@@ -71,8 +71,13 @@ class QuizView extends Component {
         });
         return;
       },
-      error: (error) => {
+      error: (result) => {
+        if (result.question = "end"){
+          alert('End of the game - please select another category');
+        }
+        else{
         alert('Unable to load question. Please try your request again');
+        }
         return;
       },
     });
