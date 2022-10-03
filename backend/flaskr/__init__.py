@@ -196,7 +196,7 @@ def create_app(test_config=None):
     @app.route("/categories/<int:cat_id>/questions")
     def retrieve_questions_per_category(cat_id):
         selection = Question.query.filter_by(category = cat_id).all()
-        category = Category.query.filter_by(id = cat_id).one()
+        category = Category.query.filter_by(id = cat_id).one_or_none()
         if selection is None:
             abort(404)
         current_questions= paginate_questions(request, selection)
@@ -225,7 +225,10 @@ def create_app(test_config=None):
         body = request.get_json()
         previous_questions = body.get("previous_questions", None)
         current_category_json = body.get("quiz_category", None)
-        current_category = current_category_json.get("type", None)
+        if type(current_category_json) is str:
+            current_category = current_category_json
+        else:
+            current_category = current_category_json.get("type", None)
         num_question_per_cat = 0
         if current_category =='click':
             filtered_quizz = Question.query.filter(Question.id.notin_(previous_questions)).all()
