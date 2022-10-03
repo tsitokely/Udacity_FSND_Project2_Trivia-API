@@ -124,7 +124,8 @@ def create_app(test_config=None):
                 }
             )
 
-        except:
+        except Exception as e:
+            print(e)
             abort(422)
 
     """
@@ -225,17 +226,27 @@ def create_app(test_config=None):
         previous_questions = body.get("previous_questions", None)
         current_category_json = body.get("quiz_category", None)
         current_category = current_category_json.get("type", None)
-        if previous_questions is None or current_category is None:
-            abort(400)
-        #category
-        current_category_info = Category.query.filter_by(type=current_category).one()
-
-        #questions
-        filtered_quizz = Question.query.filter(Question.category==current_category_info.id,Question.id.notin_(previous_questions)).all()
-        questions_id = [question.id for question in filtered_quizz]
-
-        new_quizz = Question.query.filter_by(id = random.choice(questions_id)).one_or_none()
-
+        num_question_per_cat = 0
+        if current_category =='click':
+            filtered_quizz = Question.query.filter(Question.id.notin_(previous_questions)).all()
+            questions_id = [question.id for question in filtered_quizz]
+            if questions_id == []:
+                quizzid = 0
+            else:
+                quizzid = random.choice(questions_id)
+            new_quizz = Question.query.filter_by(id = quizzid).one_or_none()
+            num_question_per_cat = Question.query.count()
+        else:
+            current_category_info = Category.query.filter_by(type=current_category).one()
+            filtered_quizz = Question.query.filter(Question.category==current_category_info.id,Question.id.notin_(previous_questions)).all()
+            questions_id = [question.id for question in filtered_quizz]
+            if questions_id == []:
+                quizzid = 0
+            else:
+                quizzid = random.choice(questions_id)
+            new_quizz = Question.query.filter_by(id = quizzid).one_or_none()
+            num_question_per_cat =  Question.query.filter(Question.category==current_category_info.id).count()
+            
         if new_quizz is None:
             return jsonify(
                 {
@@ -245,7 +256,8 @@ def create_app(test_config=None):
         else:
             return jsonify(
                 {
-                    "question": new_quizz.format()
+                    "question": new_quizz.format(),
+                    "num_question_per_cat" : num_question_per_cat
                 }
             )
     """

@@ -28,10 +28,10 @@ npm start
 ---
 ## Game Play Mechanics
 
-Currently, when an user plays the game, he/she plays up to the number of questions on the chosen category. The app will display a popup when all questions are played in the selected category and you will need to replay by selecting another category through the `play` button
+Currently, when an user plays the game, he/she plays up to the number of questions on the chosen category. The app will display your scores (aka the result of the game) when all questions are played in the selected category and you will need to replay by clicking on the `Play Again?` button
 #### Example :
 - Let's say that the `Science` category has been selected
 - The `Science` category has `3` questions
-- After the user played all `3 questions`, a popup will be displayed
-- If you wish to continue the game, you will need to replay it and select another category
+- After the user played all `3 questions`, the result of the game will be displayed
+- If you wish to continue the game, you will need to click on replay button
 ---

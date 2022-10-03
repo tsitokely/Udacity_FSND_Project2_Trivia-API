@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import '../stylesheets/QuizView.css';
 
-const questionsPerPlay = 5;
+
 
 class QuizView extends Component {
   constructor(props) {
@@ -16,6 +16,7 @@ class QuizView extends Component {
       currentQuestion: {},
       guess: '',
       forceEnd: false,
+      questionsPerPlay : 2,
     };
   }
 
@@ -67,17 +68,13 @@ class QuizView extends Component {
           previousQuestions: previousQuestions,
           currentQuestion: result.question,
           guess: '',
-          forceEnd: result.question ? false : true,
+          forceEnd: result.question === "end" ? true:(result.question ? false : true),
+          questionsPerPlay: this.state.questionsPerPlay = result.num_question_per_cat,
         });
         return;
       },
-      error: (result) => {
-        if (result.question = "end"){
-          alert('End of the game - please select another category');
-        }
-        else{
-        alert('Unable to load question. Please try your request again');
-        }
+      error: (error) => {
+          alert('Unable to load question. Please try your request again');
         return;
       },
     });
@@ -175,7 +172,9 @@ class QuizView extends Component {
   }
 
   renderPlay() {
-    return this.state.previousQuestions.length === questionsPerPlay ||
+    console.log(this.state.questionsPerPlay);
+    console.log(this.state.forceEnd);
+    return this.state.previousQuestions.length === this.state.questionsPerPlay ||
       this.state.forceEnd ? (
       this.renderFinalScore()
     ) : this.state.showAnswer ? (
