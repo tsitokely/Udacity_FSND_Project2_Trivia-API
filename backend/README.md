@@ -59,7 +59,23 @@ psql trivia_test < trivia.psql
 ```Powershell
 pip psql -f trivia.psql trivia_test
 ```
+- Setup the database connection information in the `.env` file inside the `backend` directory:
 
+```
+# settings
+TRIVIA_DB=
+TRIVIA_DB_USR=
+TRIVIA_DB_USR_PWD=
+TRIVIA_DB_HOST_PORT=
+```
+> Below the description of each environment variable:
+> `TRIVIA_DB`: the database name of the Trivia app
+> 
+> `TRIVIA_DB_USR`: the username for `TRIVIA_DB`
+> 
+> `TRIVIA_DB_USR_PWD`: the password for `TRIVIA_DB_USR`
+> 
+> `TRIVIA_DB_HOST_PORT`= the host and port used to connect to `TRIVIA_DB`. The expected format for this variable is `HOST:PORT`
 ---
 ### Run the Server
 
